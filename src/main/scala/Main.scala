@@ -4,20 +4,29 @@ import potentializer.PotParser
   println("Testing parser:")
 
   val testprog = """
-var g : int;
+var x : int;
+var y : int;
+
+{ ¬ y = 1 }
 
 thread A {
-  var l : int;
-  l = LOAD(g);
-  l = l + 1;
-  STORE(g, l);
+  { true }
+  STORE(x, 1);
+  { x = 1 }
+  STORE(y, 1);
+  { true }
 }
 
 thread B {
-  var l2 : int;
-  l2 = LOAD(g);
-  STORE(g, 2*l2);
+  var a : int;
+  var b : int;
+  { ¬ y = 1 ∨ x = 1 }
+  a = LOAD(y);
+  { ¬ a = 1 ∨ x = 1 }
+  b = LOAD(x);
+  { ¬ a = 1 ∨ b = 1 }
 }
+
   """
 
   println(PotParser.parseAll(PotParser.prog, testprog))
